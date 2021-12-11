@@ -15,9 +15,15 @@ unsigned long rss;
 
 static int escribir_archivo(struct seq_file *file, void *v)
 {   
+    int n = 0;
+    int n1 = 0;
     seq_printf(file, "[\n");
     for_each_process(process){
-        seq_printf(file, "\t{\n");
+        if (n == 0){
+            seq_printf(file, "\t{\n");
+        }else{
+            seq_printf(file, "\t,\n{\n");
+        }
         seq_printf(file, "\t\t\"pid\" : %1i,\n", process->pid);
         seq_printf(file, "\t\t\"name\" : \"%1s\",\n", process->comm);
         seq_printf(file, "\t\t\"uid\" : %1i,\n", __kuid_val(process->real_cred->uid));
@@ -28,19 +34,27 @@ static int escribir_archivo(struct seq_file *file, void *v)
         }
         seq_printf(file, "\t\t\"ram_usage\" : %lu,\n", rss);
         seq_printf(file, "\t\t\"childrens\": [");
+        n1 = 0;
         list_for_each(childrens, &(process->children)){
             children = list_entry(childrens, struct task_struct, sibling);
-            seq_printf(file, "\n\t\t{\n"); 
+            if (n1 == 0){
+                seq_printf(file, "\n\t\t{\n"); 
+
+            }else{
+                seq_printf(file, ",\n\t\t{\n"); 
+            }
             seq_printf(file, "\t\t\t\"pid\" : %1i,\n", children->pid);
-            seq_printf(file, "\t\t\t\"name\" : \"%1s\"\n", children->comm);
+            seq_printf(file, "\t\t\t\"name\" : \"%1s\",\n", children->comm);
             seq_printf(file, "\t\t\t\"state\": %ld,\n", children->state);
             rss = 0;
             if (children->mm){
                 rss = get_mm_rss(children->mm);
             }
             seq_printf(file, "\t\t\t\"use_ram\": %lu\n", rss);
-            seq_printf(file, "\t\t},");
+            seq_printf(file, "\t\t}");
+            n1 = 1;
         }
+        n = 1;
         seq_printf(file, " ]\n");
         seq_printf(file, "\t}");
     }
