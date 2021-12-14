@@ -12,14 +12,13 @@ export class ApiService {
 
   constructor() {}
 
-  public listen(path: string): Observable<any> {
-    this.subject = this.create(path);
+  public websocket(path: string): Observable<any> {
+    this.subject = this.new_observable(path);
     return this.subject.asObservable();
   }
 
-  create(path: string) {
-    this.webSocket = new WebSocket(`ws://34.125.142.83/${path}`);
-
+  new_observable(path: string) {
+    this.webSocket = new WebSocket(`ws://34.125.138.211/${path}`);
     const observable = new Observable((observableVar: Observer<MessageEvent>) => {
       this.webSocket.onmessage = observableVar.next.bind(observableVar);
       this.webSocket.onerror = observableVar.error.bind(observableVar);

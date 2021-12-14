@@ -1,1 +1,40 @@
-<p>ram works!</p>
+<div class="row justify-content-center align-content-center" style="height: 91.5vh;">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header text-white fw-bold h3" style="background-color: #17202e;">
+                Memoria RAM
+            </div>
+            <div class="card-body justify-content-center" style="background-color: #1e293b;">
+                <div class="row justify-content-center">
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Total Ram</p>
+                        <p class="h4 fw-bold">{{totalram}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Free Ram</p>
+                        <p class="h4 fw-bold">{{freeram}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Use Ram</p>
+                        <p class="h4 fw-bold">{{useram}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Use Ram %</p>
+                        <p class="h4 fw-bold">{{(useram*100/totalram).toFixed(4)}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Cache Ram</p>
+                        <p class="h4 fw-bold">{{cacheram}}</p>
+                    </div>
+                    <div class="col-12"></div>
+                    <div class="col-lg-10">
+                        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer" style="background-color: #17202e;">
+
+            </div>
+        </div>
+    </div>
+</div>

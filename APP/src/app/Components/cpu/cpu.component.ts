@@ -12,12 +12,10 @@ export class CpuComponent implements OnInit {
   constructor(private cpuWebSocket: ApiService) { }
 
   ngOnInit(): void {
-    this.cpuWebSocket.listen('WebSocketCpu').subscribe((evt) => {
+    this.cpuWebSocket.websocket('WebSocketCpu').subscribe((evt) => {
         let values = evt.data;
         console.log(JSON.parse(values))
     });
   }
-
-
 
 }
