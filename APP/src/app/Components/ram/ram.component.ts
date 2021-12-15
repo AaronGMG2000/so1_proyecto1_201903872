@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from '../../api.service';
 import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { dataset } from 'src/app/Models/data';
 @Component({
   selector: 'app-ram',
   templateUrl: './ram.component.html',
@@ -26,23 +25,24 @@ export class RamComponent implements OnInit {
       this.freeram = values.freeram;
       this.useram = values.useram - values.cacheram;
       this.cacheram = values.cacheram;
+      let useram_porcentaje = (this.useram  * 100) / this.totalram;
       if (this.data.length > 20) {
         this.data.shift();
         this.labels.shift();
-        this.data.push(this.useram);
+        this.data.push(useram_porcentaje.toFixed(4));
         this.labels.push(new Date().toLocaleTimeString());
       }else{
-        this.data.push(this.useram);
+        this.data.push(useram_porcentaje.toFixed(4));
         this.labels.push(new Date().toLocaleTimeString());
       }
       this.chart?.update();
     });
   }
-  
+
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [{
       data: this.data,
-      label: 'Use Ram',
+      label: 'Porcentaje de Uso de Ram',
       yAxisID: 'y-axis-1',
       backgroundColor: 'rgba(255,0,0,0.3)',
       borderColor: 'red',
