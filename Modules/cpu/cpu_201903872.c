@@ -11,7 +11,7 @@ MODULE_AUTHOR("Rudy Aarón Gopal Marroquín Garcia");
 
 struct task_struct *process, *children;
 struct list_head *childrens;
-unsigned long rss;
+unsigned long memo_ram;
 
 static int escribir_archivo(struct seq_file *file, void *v)
 {   
@@ -20,43 +20,43 @@ static int escribir_archivo(struct seq_file *file, void *v)
     seq_printf(file, "[\n");
     for_each_process(process){
         if (n == 0){
-            seq_printf(file, "\t{\n");
+            seq_printf(file, "  {\n");
         }else{
-            seq_printf(file, "\t,\n{\n");
+            seq_printf(file, "  ,\n{\n");
         }
-        seq_printf(file, "\t\t\"pid\" : %1i,\n", process->pid);
-        seq_printf(file, "\t\t\"name\" : \"%1s\",\n", process->comm);
-        seq_printf(file, "\t\t\"uid\" : %1i,\n", __kuid_val(process->real_cred->uid));
-        seq_printf(file, "\t\t\"state\" : %li,\n", process->state);
-        rss = 0;
+        seq_printf(file, "      \"pid\" : %1i,\n", process->pid);
+        seq_printf(file, "      \"name\" : \"%1s\",\n", process->comm);
+        seq_printf(file, "      \"uid\" : %1i,\n", __kuid_val(process->real_cred->uid));
+        seq_printf(file, "      \"state\" : %li,\n", process->state);
+        memo_ram = 0;
         if (process->mm){
-            rss = get_mm_rss(process->mm);
+            memo_ram = get_mm_rss(process->mm);
         }
-        seq_printf(file, "\t\t\"ram_usage\" : %lu,\n", rss);
-        seq_printf(file, "\t\t\"childrens\": [");
+        seq_printf(file, "      \"ram_usage\" : %lu,\n", memo_ram);
+        seq_printf(file, "      \"childrens\": [");
         n1 = 0;
         list_for_each(childrens, &(process->children)){
             children = list_entry(childrens, struct task_struct, sibling);
             if (n1 == 0){
-                seq_printf(file, "\n\t\t{\n"); 
+                seq_printf(file, "\n        {\n"); 
 
             }else{
-                seq_printf(file, ",\n\t\t{\n"); 
+                seq_printf(file, ",\n       {\n"); 
             }
-            seq_printf(file, "\t\t\t\"pid\" : %1i,\n", children->pid);
-            seq_printf(file, "\t\t\t\"name\" : \"%1s\",\n", children->comm);
-            seq_printf(file, "\t\t\t\"state\": %ld,\n", children->state);
-            rss = 0;
+            seq_printf(file, "          \"pid\" : %1i,\n", children->pid);
+            seq_printf(file, "          \"name\" : \"%1s\",\n", children->comm);
+            seq_printf(file, "          \"state\": %ld,\n", children->state);
+            memo_ram = 0;
             if (children->mm){
-                rss = get_mm_rss(children->mm);
+                memo_ram = get_mm_rss(children->mm);
             }
-            seq_printf(file, "\t\t\t\"use_ram\": %lu\n", rss);
-            seq_printf(file, "\t\t}");
+            seq_printf(file, "          \"use_ram\": %lu\n", memo_ram);
+            seq_printf(file, "        }");
             n1 = 1;
         }
         n = 1;
         seq_printf(file, " ]\n");
-        seq_printf(file, "\t}");
+        seq_printf(file, "  }");
     }
     seq_printf(file, "\n]\n");
     return 0;
