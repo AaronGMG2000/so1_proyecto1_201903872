@@ -115,11 +115,40 @@ func kill(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Elemento eliminado: " + string(out[:]))
 }
 
+func cpu_porcentaje(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	use_socket, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer use_socket.Close()
+	duration := time.Duration(2) * time.Second
+	for {
+		cmd := exec.Command("sh", "-c", "ps -eo pcpu | sort -k 1 -r | head -100")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		data := strings.Replace(string(out[:]), "\n", ",", -1)
+		data = "[" + data[5:len(data)-1] + "]"
+		err = use_socket.WriteMessage(1, []byte(data))
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		time.Sleep(duration)
+	}
+}
+
 func main() {
 	router := mux.NewRouter()
 	log.Println("Server on Port 3000")
 	router.HandleFunc("/WebSocketRam", socket)
 	router.HandleFunc("/WebSocketCpu", cpu)
+	router.HandleFunc("/Cpu", cpu_porcentaje)
 	router.HandleFunc("/", prueba).Methods("GET", "OPTIONS")
 	router.HandleFunc("/kill", kill).Methods("POST", "OPTIONS")
 	log.Fatal(http.ListenAndServe(":3000", router))

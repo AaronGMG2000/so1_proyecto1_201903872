@@ -18,7 +18,9 @@ static int escribir_archivo(struct seq_file *archivo, void *v)
     si_meminfo(&system_info);
     unsigned long totalram = (system_info.totalram * system_info.mem_unit)/(1024*1024);
     unsigned long freeram = (system_info.freeram * system_info.mem_unit)/(1024*1024);
-    unsigned long useram = totalram - freeram;
+    unsigned long sharedram = (system_info.sharedram * system_info.mem_unit)/(1024*1024);
+    unsigned long bufferram = (system_info.bufferram * system_info.mem_unit)/(1024*1024);
+    unsigned long useram = totalram - freeram + sharedram + bufferram;
 
     seq_printf(archivo, "{\n");
     seq_printf(archivo, "\"totalram\": %8li,\n", totalram);
