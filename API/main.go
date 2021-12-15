@@ -115,6 +115,10 @@ func kill(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Elemento eliminado: " + string(out[:]))
 }
 
+func locust(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "funcionando")
+}
+
 func cpu_porcentaje(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -148,6 +152,7 @@ func main() {
 	log.Println("Server on Port 3000")
 	router.HandleFunc("/WebSocketRam", socket)
 	router.HandleFunc("/WebSocketCpu", cpu)
+	router.HandleFunc("/Locust", locust)
 	router.HandleFunc("/Cpu", cpu_porcentaje)
 	router.HandleFunc("/", prueba).Methods("GET", "OPTIONS")
 	router.HandleFunc("/kill", kill).Methods("POST", "OPTIONS")
