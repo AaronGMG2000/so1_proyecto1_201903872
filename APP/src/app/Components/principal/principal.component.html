@@ -6,6 +6,26 @@
             </div>
             <div class="scroll card-body justify-content-center" style="background-color: #1e293b;">
                 <div class="row justify-content-center">
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Total</p>
+                        <p class="h4 fw-bold">{{total}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Ejecución</p>
+                        <p class="h4 fw-bold">{{ejecucion}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Suspendidos</p>
+                        <p class="h4 fw-bold">{{suspendidos}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Detenidos</p>
+                        <p class="h4 fw-bold">{{detenidos}}</p>
+                    </div>
+                    <div class="col-lg-2 text-white text-center" style="background-color: #243147;">
+                        <p class="text-secondary fw-bold">Zombie</p>
+                        <p class="h4 fw-bold">{{zombie}}</p>
+                    </div>
                     <div class="col-lg-12">
                         <mat-tab-group class="text-white">
                             <mat-tab label="Procesos">
@@ -35,11 +55,11 @@
                                         </ng-container>
                                         <ng-container matColumnDef="ram_usage">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header> USO DE RAM </th>
-                                            <td mat-cell *matCellDef="let row"> {{row.ram_usage}} </td>
+                                            <td mat-cell *matCellDef="let row"> {{row.ram_usage.toFixed(4)}} </td>
                                         </ng-container>
                                         <ng-container matColumnDef="state">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header> ESTADO </th>
-                                            <td mat-cell *matCellDef="let row"> {{row.state}} </td>
+                                            <td mat-cell *matCellDef="let row"> {{row.state_name}} </td>
                                         </ng-container>
                                         <ng-container matColumnDef="Kill">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Kill </th>
@@ -82,7 +102,7 @@
                                                             <li class="list-group-item text-white" style="background-color: #1e293b;">Nombre: {{row.name}}</li>
                                                             <li class="list-group-item text-white" style="background-color: #1e293b;">Usuario: {{row.user}}</li>
                                                             <li class="list-group-item text-white" style="background-color: #1e293b;">Uso de ram: {{row.ram_usage}}</li>
-                                                            <li class="list-group-item text-white" style="background-color: #1e293b;">Estado: {{row.state}}</li>
+                                                            <li class="list-group-item text-white" style="background-color: #1e293b;">Estado: {{row.state_name}}</li>
                                                             <li class="list-group-item text-white" style="background-color: #1e293b;">ID Usuario: {{row.uid}}</li>
                                                             <li class="list-group-item text-white" style="background-color: #1e293b;">ID Proceso: {{row.pid}}</li>
                                                             <li class="list-group-item text-white scroll2" style="background-color: #1e293b;">

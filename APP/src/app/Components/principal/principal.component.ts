@@ -1,12 +1,12 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ApiService } from '../../api.service';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {IndexService} from '../../Services/index.service';
+import { IndexService } from '../../Services/index.service';
 
-export interface childrens {
+export interface Children {
   name: string;
   pid: number;
   state: number;
@@ -19,8 +19,9 @@ export interface Process {
   user: string;
   uid: number;
   ram_usage: number;
+  state_name: string;
   state: number;
-  childrens: childrens[];
+  childrens: Children[];
 }
 
 
@@ -34,7 +35,12 @@ export interface Process {
 export class PrincipalComponent implements AfterViewInit {
   panelOpenState = false;
   data: Process[] = [];
-  users:any = {}
+  users: any = {}
+  ejecucion = 0;
+  suspendidos = 0;
+  detenidos = 0;
+  zombie = 0;
+  total = 0;
   displayedColumns: string[] = ['name', 'user', 'ram_usage', 'state', 'uid', 'pid', 'Kill'];
   displayedColumns2: string[] = ['name'];
   dataSource: MatTableDataSource<Process>;
@@ -80,16 +86,16 @@ export class PrincipalComponent implements AfterViewInit {
       this.dataSource2.paginator.firstPage();
     }
   }
-  
+
 
   ngOnInit(): void {
 
     this.get_user.GET_USERS().subscribe(
       (res: any) => {
-        let new_data:any = {}
+        let new_data: any = {}
         let users = JSON.parse(res)
-        for(let keys in users){
-          let user:number = users[keys]
+        for (let keys in users) {
+          let user: number = users[keys]
           new_data[user] = keys
         }
         this.users = new_data
@@ -99,9 +105,30 @@ export class PrincipalComponent implements AfterViewInit {
 
     this.cpuWebSocket.websocket('WebSocketCpu').subscribe((evt) => {
       this.data = [];
+      this.ejecucion = 0;
+      this.suspendidos = 0;
+      this.detenidos = 0;
+      this.zombie = 0;
+      this.total = 0;
       let values = JSON.parse(evt.data);
-      values.forEach((element: Process) => {
+      values.forEach((element: any) => {
         element['user'] = this.users[element.uid]
+        element.ram_usage = element.ram_usage / 32109
+        this.total++
+        if (element.state === 0) {
+          element.state_name = 'Running'
+          this.ejecucion++
+        } else if (element.state === 8) {
+          element.state_name = 'Stopped'
+          this.detenidos++
+
+        } else if (element.state === 4) {
+          element.state_name = 'Zombie'
+          this.zombie++
+        } else {
+          element.state_name = 'Sleeping'
+          this.suspendidos++
+        }
         this.data.push(element);
       });
       console.log(this.data)
